@@ -1,0 +1,214 @@
+<html>
+	<head>
+		<title> 3D Spring Simualator </title>
+		<canvas id="c" ></canvas>
+
+		<style>
+			body{margin 12;}
+			#c {
+				float: left;
+			}
+			#button {
+				float: right;
+			}
+			//canvas {width:2%; height:75%;};
+			line-height: 90px;
+			font-family: Georgia, serif;
+		</style>
+		
+	</head>
+	
+
+	<body>
+	<script src = "js/three.js"></script>
+	<script src = "js/OrbitControls.js"></script>
+	<script src = "js/GLTFLoader.js"></script>
+
+<button type="button" id = "pause" style="display: block;">pause/start</button>
+<label style="display: block;">damping<input type="text" size="5" value="0.100"></label>
+<label style="display: block;">spring stiffness<input type="text" id="yeet" size="4" value=".01">
+</label><label style="display: block;">spring length<input type="text" size="4" value="2.50"></label>
+<label style="display: block;">initial stretch<input type="text" id = "xo" size="4" value="500"></label><label style="display: block;"><input type="checkbox">show energy</label><label style="display: block;"><input type="checkbox">show clock</label><label style="display: block;"><input type="checkbox">pan-zoom</label><label style="display: block;">time step<input type="text" size="6" value="0.0250"></label><label style="display: block;">time rate<input type="text" size="4" value="1.00"></label><label style="display: block;">Diff Eq Solver<select><option>Eulers Method</option><option>Modified Euler</option><option selected="selected">Runge-Kutta</option><option>Adaptive Step-Modified Euler</option><option>Adaptive Step-Runge-Kutta</option></select></label><label style="display: block;">background<select><option selected="selected">white</option><option>black</option><option>white with trails</option><option>black with trails</option><option>white with long trails</option><option>black with long trails</option></select></label><button type="button" id = "reset" style="display: block;">reset</button>
+spring stiffness
+
+<div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="kRange">
+</div>
+stretch
+<div class="slidecontainer">
+  <input type="range" min="-750" max="750" value="0" class="slider" id="stretchRange">
+</div>
+mass
+<div class="slidecontainer">
+  <input type="range" min="-500" max="500" value="0" class="slider" id="massRange">
+</div>
+	<script>
+		const winRat = .7
+		const canvas = document.querySelector('#c');
+  var renderer = new THREE.WebGLRenderer({canvas});
+	renderer.setSize(window.innerWidth*winRat,window.innerHeight*.9);
+	
+	
+	
+
+
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(75,window.innerWidth /window.innerHeight,.1,1000);
+		
+		/*var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth,window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+		*/
+		//window resize fix
+		window.addEventListener('resize',function(){
+			var width = window.innerWidth*winRat;
+			var height = window.innerHeight*winRat;
+			renderer.setSize(width,height);
+			camera.aspect = width / height;
+			camera.updateProjectionMatrix();
+		})
+		
+		controls = new THREE.MapControls(camera,renderer.domElement);
+		controls.screenSpacePanning = false;
+		controls.maxPolarAngle = Math.PI / 2;
+		
+
+var dog = null;
+var loader = new THREE.GLTFLoader();
+
+loader.load('spr.gltf', function(object){
+dog = object.scene;
+object.scene.name = "name";
+scene.add(dog);
+
+});
+	
+
+		var light = new THREE.PointLight( 0xff0000, 4, 100 );
+light.position.set( 50, 50, 50 );
+scene.add( light );
+		var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+scene.add( directionalLight );
+		//add elements
+		var plane = new THREE.Mesh( new THREE.PlaneGeometry( 128, 128, 5 ), new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} ) );
+		//plane.rotateX(Math.PI/2);
+		camera.rotateY(Math.PI/2)
+		var box = new THREE.Mesh(new THREE.BoxGeometry(700, 700, 700, 16, 16, 16), new THREE.MeshBasicMaterial({color: 0xfffff, wireframe: true}));
+		scene.add(box);
+		var cube = new THREE.Mesh(new THREE.BoxGeometry(25, 25, 25, 10, 10, 10), new THREE.MeshBasicMaterial({color: 0xff6600, wireframe: false}));
+		cube.position.z = 150;
+		scene.add(cube);
+		scene.add( plane );
+		camera.position.y = 60;
+		camera.position.z = 30;
+		camera.position.x = 60;
+	
+		
+		
+		var update = function()
+		{
+			
+			//model.rotation.y += .05;
+		};
+		var render = function()
+		{
+			renderer.render(scene,camera);
+		};
+		var up = true;
+		var v = 0;
+		var k = .01;
+		var m = 10;
+		var a = 0;
+		var t = 1;
+		var xo = 0;
+		var start = false;
+		var GameLoop = function()
+		{ 
+		
+		//intialize sliders
+		
+		//kslider
+		var kk = document.getElementById("kRange").value;
+		k *= kk;
+		var ss = document.getElementById("stretchRange").value;
+
+		var res = document.getElementById("reset").value;
+		
+		
+		
+		var ppbutton = document.getElementById("pause");
+		document.getElementById("pause").onclick = function() {
+		if(start == false){
+		ppbutton.innerHTML = "pause";
+		start = true;}
+		else{
+		ppbutton.innerHTML = "play";
+		start = false;	
+		}}
+		
+		document.getElementById("reset").onclick = function() {
+		
+		ppbutton.innerHTML = "play";
+		start = false;	
+		v = 0;
+		document.getElementById("kRange").value = 50
+		document.getElementById("massRange").value = 0; 
+		document.getElementById("stretchRange").value = 0;
+		dog.scale.z = 1;
+		cube.position.z = 150;
+		}
+		
+		/*var xon = document.getElementById("xo").value;
+		if(dog && xon != xo){
+			xo = xon;
+			dog.scale.z += .001*xo;
+			cube.position.z += .001*150*xo;
+			v = 0;
+		}*/
+		if(dog && up){
+		//dog.scale.z += .001*xo;
+		//cube.position.z += .001*150*xo;
+		up = false;
+		}
+
+		if((dog && ((ss != xo) && (ss != 0)))&&!start){
+			xo = ss;
+			
+			dog.scale.z = 1 + .001*xo;
+			cube.position.z = 150 + .001*150*xo;
+			v = 0;
+		
+		}
+		
+		if(dog && res){
+			
+		}
+		if((dog && !up)&&start){
+		a = (-1*k*(cube.position.z - 150))/m;
+		v += a*t;
+		cube.position.z += v*t;
+		dog.scale.z += v*t/150;
+		
+		}
+		var job = document.getElementById("yeet").value;
+		//document.getElementById("kRange").value = 50;
+		if(job && job> 0){
+			k = document.getElementById('yeet').value;
+		}
+		/*if(dog && up){
+dog.scale.z += .001;
+cube.position.z += .001*150;
+}*/
+		//dog.position.x += .1;
+				requestAnimationFrame(GameLoop);
+				update();
+				//controls.update();
+				render();
+				
+				
+		}
+		GameLoop();
+	</script>
+
+	</body>
+</html>
