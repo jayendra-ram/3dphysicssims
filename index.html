@@ -1,203 +1,85 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<title> da zone </title>
-		
-		<style>
-			body{margin 0;}
-			canvas {width:100%; height:100%;};
-		</style>
-	</head>
-	
-	
-	<body>
-	<script src = "js/three.js"></script>
-	<script src = "js/OrbitControls.js"></script>
-	<script>
-//30 units = 1 AU
-	/*
-	TODO:
-	Put functions in seperate js
-	add paths
-	add buttons and sliders and reset
-	menus
-	host
+<!-- saved from url=(0029)https://www.myphysicslab.com/ -->
+<html lang="en" class="gr__myphysicslab_com"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title lang="en">3D Simulators</title>
 
-	
-	
-	do math in real vals and then convert to render
-	
-	
-	*/
-	const G = 5.3826231*(10**(-40));
-	const dt =  86400/32;
-//vector math
-		function va(a,b){
-			var c = [];
-			c[0] = a[0] + b[0];
-			c[1] = a[1] + b[1];
-			c[2] = a[2] + b[2];
-			return c;
-		}
-		function va3(a,b,c){
-			var d = [];
-			d[0] = a[0] + b[0] + c[0];
-			d[1] = a[1] + b[1] + c[1];
-			d[2] = a[2] + b[2] + c[2];
-			return d;
-		}
-		function vm(a,b){
-			var c = [];
-			c[0] = a[0]*b;
-			c[1] = a[1]*b;			
-			c[2] = a[2]*b;
-			return c;
-		}
-		function mag(a,b){
-			var c = ((a[0]-b[0])**2 +(a[1]-b[1])**2 +(a[2]-b[2])**2)**(.5);
-			return c;
-		}
-		function rad(a,b){ //a is earth, b is sun
-			var c = [a[0] - b[0],a[1] - b[1],a[2] - b[2]];
-			
-			return c;
-		}
-		function f1(pos,vel,a,b){ //calculates acc using pos and vel and a and b
-			//return acc
-			//acc for a
-			return vel;
-			//acc for b
-				
-			}
-		function f2(pos,vel,a,b){
-			//return vel			
-			//acc for a
-			var vprime;
-			vprime = va(vm(rad(pos,a.pos),-1*G*a.mass/(mag(pos,a.pos))**2),vm(rad(pos,b.pos),-1*G*b.mass/(mag(pos,b.pos))**2 ));
-			return vprime;
-			//acc for b
-				
-		}
-		class Planet{
-				constructor(pos,vel,rad,mass,col,scene){
-					this.pos = pos;
-					this.vel = vel;
-					this.rad = rad;
-					this.mass = mass;
-					this.col = col;
-					this.geometry = new THREE.SphereGeometry(rad, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2);
-					this.model = new THREE.Mesh(new THREE.SphereGeometry(rad, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2), new THREE.MeshBasicMaterial({color:this.col,wireframe:false}));
-					this.scene = scene;
-					scene.add(this.model);
-					this.model.position.x = pos[0];
-					this.model.position.y = pos[1];
-					this.model.position.z = pos[2];
-					
-					//path draw
-					
-					
-				}
-			render(){
-				
-				this.model.position.x = this.pos[0];
-				this.model.position.y = this.pos[1];
-				this.model.position.z = this.pos[2];
-				
-					//scene.add(line);
-			}
-			euler_step(planA,planB){
-				this.vel = va(this.vel,vm(f2(this.pos,this.vel,planA,planB),dt));
-				this.pos = va(this.pos,vm(this.vel,dt));
-				//console.log(this.pos);
-				//this.render();
-			}
-			reuler_step(planA,planB){
-				this.vel = va(this.vel,vm(f2(this.pos,this.vel,planA,planB),dt));
-				this.pos = va(this.pos,vm(this.vel,dt));
-				
-			}
-			verlet_step(planA,planB){
-				var pos_new = va3(this.pos,vm(this.vel,dt),vm(f2(this.pos,this.vel,planA,planB),.5*dt*dt));
-				this.vel = va(this.vel,vm(va(f2(this.pos,this.vel,planA,planB),f2(pos_new,this.vel,planA,planB)),.5*dt));
-				this.pos = pos_new;
-				
-			}
-		}
-		
-		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera(75,window.innerWidth /window.innerHeight,.1,1000);
-		
-		var renderer = new THREE.WebGLRenderer();
-		renderer.setSize(window.innerWidth,window.innerHeight);
-		document.body.appendChild(renderer.domElement);
-		
-		//window resize fix
-		window.addEventListener('resize',function(){
-			var width = window.innerWidth;
-			var height = window.innerHeight;
-			renderer.setSize(width,height);
-			camera.aspect = width / height;
-			camera.updateProjectionMatrix();
-		})
-		
-		controls = new THREE.OrbitControls(camera,renderer.domElement);
-		
-		
 
-		var test = new Planet([0,0,0],[0,9.64*10**(-6),.64*10**(-6)],1,5.972*10**24,0x39ff14,scene);
-		var test2 = new Planet([30,0,0],[0,0,0],2,1.989*10**25,0xfdb813,scene);
-		var test3 = new Planet([0,90,0],[0,0,6.64*10**(-9)],1,5.972*10**24,0x0077be,scene);
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" type="text/css" href="./myPhysicsLab Home Page_files/stylesheet1.css"> 
+  <meta name="keywords" content="physics simulation, physics simulations,
+  differential equations, numerical methods, Java, source code">
+  <style type="text/css">
 
-		//scene.add(test.model);
-
-		
-
-		camera.position.y = -10;
-		camera.position.z = 11;
-		//sphere.position.x = 1;
-		//document.addEventListener('keydown', function(event) {
-    /*if(event.keyCode == 65) {
-        camera.position.x += -.1;
+    /* simlist = list of simulations on home page */
+    #simlist a {display: inline-block;
+        text-align: center;
+        margin: 0.5em;
+        font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+        font-size: 80%;
+        text-decoration: none;
+        padding: 1px;
+        color: #00f;
+      }
+    #simlist a:link {
+      color: #00f;
     }
-    if(event.keyCode == 68) {
-        camera.position.x += .1;
+    #simlist a:visited {
+      color: #60c;
     }
-	 if(event.keyCode == 87) {
-        camera.position.z += -.1;
+    #simlist a:hover, #simlist a:focus {
+      border: 1px solid #99f;
+      padding: 0px;
+      color: #99f;
     }
-	 if(event.keyCode == 83) {
-        camera.position.z += .1;
-    }*/
-		
-		
-		var update = function()
-		{
-		//	cube.rotation.x += .1;
-			//cube.rotation.z += .05;
-		for (i = 0;i <2;i++){
-			test.verlet_step(test2,test3);
-			test2.verlet_step(test,test3);
-			test3.verlet_step(test2,test);
-		}
-		test.render();
-		test2.render();
-		test3.render();
-		};
-		var render = function()
-		{
-			renderer.render(scene,camera);
-		};
-		
-		
-		var GameLoop = function()
-		{
-				requestAnimationFrame(GameLoop);
-				update();
-				//controls.update();
-				render();
-		};
-		GameLoop();
-	</script>
-	
-	</body>
-</html>
+    #simlist a:active {
+      border: 1px solid #f00;
+      padding: 0px;
+      color: #f00;
+    }
+    ol#sim-steps em {
+      font-weight: bold;
+    }
+  </style>
+
+<link href="./myPhysicsLab Home Page_files/classic-10_7.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+	#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif;  width:600px;}
+</style>
+
+<style type="text/css">#mc_embed_signup input.mce_inline_error { border-color:#6B0505; } #mc_embed_signup div.mce_inline_error { margin: 0 0 1em 0; padding: 5px 10px; background-color:#6B0505; font-weight: bold; z-index: 1; color:#fff; }</style></head>
+
+<body data-gr-c-s-loaded="true" style="zoom: 1;" class="vsc-initialized">
+
+
+<h1 lang="en">A Variety of 3D Simulators</h1>
+
+
+<ul id="header_bar">
+</ul>
+
+<p class="introduction" lang="en">
+Hello there! This website hosts a few 3D concept projects. They were all originally in cpp and opengl however I ported some to threejs if they didn't use too many models. These also work on mobile, so have fun!
+</p>
+
+<div id="simlist">
+
+<a href="https://3dphysicssims.com/spring.html">
+  <img src="./thumb_spring.png" alt="" width="250" height="200"><br>Single Spring</a>
+
+<a href="https://www.myphysicslab.com/springs/double-spring-en.html">
+  <img src="./myPhysicsLab Home Page_files/pic_dbl_spring.png" alt="" width="104" height="65"><br>Double Spring</a>
+
+<a href="https://www.3dphysicssims.com">
+<img src="./myPhysicsLab Home Page_files/pic_pendulum1.png" alt="" width="62" height="55"><br>Pendulum</a>
+
+
+
+</div>
+
+
+
+
+
+
+
+</body></html>
