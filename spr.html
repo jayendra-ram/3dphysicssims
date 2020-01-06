@@ -160,7 +160,7 @@
 <center><div class="slidecontainer">
   <input type="range" min="0" max="100" value="50" class="slider" id="kRange">
 </div></center>
-<center>stretch</center>
+<center><b>stretch</b></center>
 <center>
 <div class="slidecontainer">
   <input type="range" min="-750" max="750" value="0" class="slider" id="stretchRange">
@@ -169,8 +169,6 @@
 <center><div class="slidecontainer">
   <input type="range" min="1" max="20" value="10" class="slider" id="massRange">
 </div></center>
-
-
 <center>
 <p>
 instructions: </p>
@@ -181,9 +179,6 @@ Stretch the spring using the <b>stretch</b> slider, and click play to oscilate t
 
 </p>
 </center>
-
-
-
 	<script>
 		const winRat = .7
 		const canvas = document.querySelector('#c');
@@ -288,12 +283,7 @@ scene.add( directionalLight );
 		
 		var ss = document.getElementById("stretchRange").value;
 		
-		m = document.getElementById("
-					    
-					    
-					    
-					    
-					    ").value;
+		m = document.getElementById("massRange").value;
 		var res = document.getElementById("reset").value;
 		
 		var d = document.getElementById("damping").value;
