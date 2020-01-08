@@ -1,0 +1,378 @@
+<html>
+	<head>
+		<title> 3D Pendulum Simualator </title>
+		<canvas id="c" ></canvas>
+
+		<style>
+			body{margin 12;}
+			#c {
+				float: left;
+				 border: 4px solid #ff6600;
+			}
+			#button {
+				float: right;
+			}
+			//canvas {width:2%; height:75%;};
+			line-height: 90px;
+			font-family: Georgia, serif;
+			.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 25%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 10px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  cursor: pointer; /* Cursor on hover */
+  background: #00FFFF;
+}
+.slider::-moz-range-thumb {
+  width:10px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  cursor: pointer; /* Cursor on hover */
+}
+
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.myButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf));
+	background:-moz-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-webkit-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-o-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-ms-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf',GradientType=0);
+	background-color:#ededed;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#777777;
+	font-family:Futura;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+.myButton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed));
+	background:-moz-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-webkit-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-o-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-ms-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed',GradientType=0);
+	background-color:#dfdfdf;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+.tab { margin-left: 40px; }
+#info {
+				text-align: left;
+				padding: 10px;
+				z-index: 10;
+				width: 60%;
+				font-size:25px;
+				position: absolute;
+				color: white;
+				text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+			}
+
+
+		</style>
+		
+	</head>
+	
+
+	<body>
+	
+	
+	<div id="info"></div>
+	
+	
+	<script src = "js/three.js"></script>
+	<script src = "js/OrbitControls.js"></script>
+	<script src = "js/GLTFLoader.js"></script>
+
+<center><p>
+<i> use mouse/trackpad/touchscreen to interact with the 3D view</i>
+</p></center>
+<center>
+<a href="#" class="myButton" id = "pause">play</a>
+<a href="#" class="myButton" id = "reset">reset</a></center>
+<center>damping</center>
+
+<center><div class="slidecontainer">
+  <input type="range" min="0" max="100" value=".4" class="slider" id="damping">
+</div></center>
+
+<!--<label style="display: block;">&emsp;&emsp; spring stiffness<input type="text" id="yeet" size="4" value=".01">
+</label><label style="display: block;">&emsp;&emsp; spring length<input type="text" size="4" value="2.50"></label>
+<label style="display: block;">&emsp;&emsp;initial stretch<input type="text" id = "xo" size="4" value="500"></label>-->
+
+<!--<label style="display: block;">&emsp;&emsp;<input type="checkbox">show clock</label>
+<label style="display: block;">&emsp;&emsp;<input type="checkbox">pan-zoom</label>-->
+<!--<label style="display: block;">&emsp;&emsp;time step<input type="text" size="6" value="0.0250"></label>-->
+<label style="display: block;">&emsp;&emsp;time rate<input type="text" size="4" value="1.00" id ="time"></label>
+<!--<label style="display: block;" >&emsp;&emsp;Diff Eq Solver<select id="ODE"><option>Eulers Method</option><option>Modified Euler</option><option selected="selected">Runge-Kutta</option><option>Adaptive Step-Modified Euler</option><option>Adaptive Step-Runge-Kutta</option></select></label>-->
+
+
+
+<label style="display: block;">&emsp;&emsp;background<select id = "background"><option selected="selected">teal</option><option>none</option></select></label>
+
+
+<center>gravity</center>
+
+<center><div class="slidecontainer">
+  <input type="range" min="5" max="20" value="10" class="slider" id="kRange">
+</div></center>
+<center><b>angle</b></center>
+<center>
+<div class="slidecontainer">
+  <input type="range" min="-750" max="750" value="0" class="slider" id="stretchRange">
+</div></center>
+<center>length</center>
+<center><div class="slidecontainer">
+  <input type="range" min="50" max="250" value="175" class="slider" id="massRange">
+</div></center>
+<center>
+<p>
+instructions: </p>
+<p>
+Move the pendulum with the <b>angle</b> slider, and click play to oscilate the pendulum.
+<p>Warning: Not all browser types supported.</p>
+
+
+</p>
+</center>
+	<script>
+		const winRat = .7
+		const canvas = document.querySelector('#c');
+		var renderer = new THREE.WebGLRenderer({canvas});
+		renderer.setSize(window.innerWidth*winRat,window.innerHeight*.9);
+	
+	
+	
+
+
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(75,window.innerWidth /window.innerHeight,.1,1000);
+		
+		/*var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth,window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+		*/
+		//window resize fix
+		window.addEventListener('resize',function(){
+			var width = window.innerWidth*winRat;
+			var height = window.innerHeight*winRat;
+			renderer.setSize(width,height);
+			camera.aspect = width / height;
+			camera.updateProjectionMatrix();
+		})
+		
+		controls = new THREE.MapControls(camera,renderer.domElement);
+		controls.screenSpacePanning = false;
+		controls.maxPolarAngle = Math.PI / 2;
+		
+		
+var dog = null;
+var loader = new THREE.GLTFLoader();
+
+loader.load('scene.gltf', function(object){
+dog = object.scene;
+
+scene.add(dog);
+			dog.rotation.z = (-Math.PI/2);
+
+});
+	
+
+		var light = new THREE.PointLight( 0xff0000, 4, 100 );
+light.position.set( 50, 50, 50 );
+scene.add( light );
+		var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+scene.add( directionalLight );
+		//add elements
+		
+		camera.rotateY(Math.PI/2)
+		var box = new THREE.Mesh(new THREE.BoxGeometry(700, 700, 700, 16, 16, 16), new THREE.MeshBasicMaterial({color: 0xfffff, wireframe: true}));
+		scene.add(box);
+		
+		
+		
+		camera.position.y = 0;
+		camera.position.z = 150;
+		//camera.position.x = 100;
+		camera.rotation.z = Math.PI/2;
+		var update = function()
+		{
+			
+			//model.rotation.y += .05;
+		};
+		var render = function()
+		{
+			renderer.render(scene,camera);
+		};
+		var up = true;
+		var v = 0;
+		var k = .01;
+		var m = 175;
+		var a = 0;
+		var t = 1;
+		var xo = 0;
+		var start = false;
+
+		var f2 = function(x,v,k,d,m){
+			return v;
+		}
+		var f1 = function(x,v,k,d,m){
+			return (-1*k*(x - 150))/m 
+			//- document.getElementById("damping").value*v*.01;
+		}
+		
+		var GameLoop = function()
+		{ 
+		
+		//intialize sliders
+		
+
+		//kslider
+		
+		var tt =document.getElementById("time").value;
+		if (!isNaN(tt) && tt.toString().indexOf('.') != -1)
+			t = tt;
+		var kk = document.getElementById("kRange").value;
+		k = 1*kk;
+		
+		var ss = document.getElementById("stretchRange").value;
+		
+		m = document.getElementById("massRange").value;
+		var res = document.getElementById("reset").value;
+		
+		var d = document.getElementById("damping").value;
+		if(dog){
+		var info = document.getElementById("info");
+		info.innerHTML = "Angle=" + (dog.rotation.z  + Math.PI/2).toFixed(2) + '|\n' + "Angular Velocity=" + v.toFixed(2) + '|\n' + "g=" + k.toFixed(2) + '|\n' + "Length=" + m + '|\n' + "Damping=" + (d*.01).toFixed(2);
+		}	//console.log(document.getElementById("energy").checked);
+		
+		
+		var ppbutton = document.getElementById("pause");
+		document.getElementById("pause").onclick = function() {
+		if(start == false){
+		ppbutton.innerHTML = "pause";
+		start = true;}
+		else{
+		ppbutton.innerHTML = "play";
+		start = false;	
+		}}
+		
+		document.getElementById("reset").onclick = function() {
+		
+		ppbutton.innerHTML = "play";
+		start = false;	
+		v = 0;
+		document.getElementById("kRange").value = 10
+		document.getElementById("massRange").value = 175; 
+		document.getElementById("stretchRange").value = 0;
+		dog.rotation.z = (-Math.PI/2);
+		}
+		if(dog){
+		dog.scale.x = m/175;
+		}
+		if(dog && up){
+		dog.scale.x = m/175;
+		up = false;
+		}
+
+		if((dog && ((ss != xo) && (ss != 0)))&&!start){
+			xo = ss;
+			
+			//dog.scale.z = 1 + .001*xo;
+			//cube.position.z = 150 + .001*150*xo;
+			v = 0;
+			dog.rotation.z = (-Math.PI/2 + xo/750*Math.PI);
+				//dog.rotateY(Math.PI/16)
+				//dog.rotateZ(Math.PI/16)
+			dog.scale.x = m/175;
+
+		
+		}
+		
+		var e = document.getElementById("background");
+
+		
+		if(document.getElementById("background").value == "none"){
+			box.visible = false;
+		}else{
+			box.visible = true;
+
+		}
+		//var ode = document.getElementById("ODE").value;
+		var ode = "Eulers Method";
+		if((dog && !up)&&start){
+		
+		if(ode == "Eulers Method"){
+		a = -(1)*(k/m)*Math.sin(dog.rotation.z + Math.PI/2) - d*.01*v;
+		v += a*t;
+		//cube.position.z += v*t;
+		dog.rotation.z += v*t;
+		//dog.scale.z += v*t/150;
+					dog.scale.x = m/175;
+
+		}
+		
+		
+		
+		
+		}
+		
+		
+				requestAnimationFrame(GameLoop);
+				update();
+				render();
+				
+				
+		}
+		GameLoop();
+	</script>
+
+	</body>
+</html>
