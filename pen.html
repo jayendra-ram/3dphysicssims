@@ -220,6 +220,9 @@ loader.load('scene.gltf', function(object){
 dog = object.scene;
 
 scene.add(dog);
+	
+	 var sphere = new THREE.Mesh( new THREE.SphereGeometry(2,20,20), new THREE.MeshBasicMaterial({color: 0xfffff, wireframe: false}));
+    scene.add(sphere);
 			dog.rotation.z = (-Math.PI/2);
 
 });
