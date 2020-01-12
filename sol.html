@@ -1,0 +1,527 @@
+<html>
+	<head>
+		<title> 3D Pendulum Simualator </title>
+		<canvas id="c" ></canvas>
+
+		<style>
+			body{margin 12;}
+			#c {
+				float: left;
+				 border: 4px solid #ff6600;
+			}
+			
+			//canvas {width:2%; height:75%;};
+			line-height: 90px;
+			font-family: Georgia, serif;
+			.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 25%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 10px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  cursor: pointer; /* Cursor on hover */
+  background: #00FFFF;
+}
+.slider::-moz-range-thumb {
+  width:10px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  cursor: pointer; /* Cursor on hover */
+}
+
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.myButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf));
+	background:-moz-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-webkit-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-o-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-ms-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf',GradientType=0);
+	background-color:#ededed;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#777777;
+	font-family:Futura;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+.myButton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed));
+	background:-moz-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-webkit-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-o-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-ms-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed',GradientType=0);
+	background-color:#dfdfdf;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+.tab { margin-left: 40px; }
+#info {
+				text-align: left;
+				padding: 10px;
+				z-index: 10;
+				width: 60%;
+				font-size:25px;
+				position: absolute;
+				color: white;
+				text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+			}
+
+
+		</style>
+		
+	</head>
+	
+
+	<body>
+	
+	
+	<div id="info"></div>
+	
+	
+	<script src = "js/three.js"></script>
+	<script src = "js/OrbitControls.js"></script>
+	<script src = "js/GLTFLoader.js"></script>
+
+<center><p>
+<i> use mouse/trackpad/touchscreen to interact with the 3D view</i>
+</p></center>
+<center>
+<a href="#" class="myButton" id = "pause">play</a>
+<a href="#" class="myButton" id = "reset">reset</a></center>
+<center>damping</center>
+
+<center><div class="slidecontainer">
+  <input type="range" min="0" max="100" value=".4" class="slider" id="damping">
+</div></center>
+
+<!--<label style="display: block;">&emsp;&emsp; spring stiffness<input type="text" id="yeet" size="4" value=".01">
+</label><label style="display: block;">&emsp;&emsp; spring length<input type="text" size="4" value="2.50"></label>
+<label style="display: block;">&emsp;&emsp;initial stretch<input type="text" id = "xo" size="4" value="500"></label>-->
+
+<!--<label style="display: block;">&emsp;&emsp;<input type="checkbox">show clock</label>
+<label style="display: block;">&emsp;&emsp;<input type="checkbox">pan-zoom</label>-->
+<!--<label style="display: block;">&emsp;&emsp;time step<input type="text" size="6" value="0.0250"></label>-->
+<label style="display: block;">&emsp;&emsp;time rate<input type="text" size="4" value="1.00" id ="time"></label>
+<!--<label style="display: block;" >&emsp;&emsp;Diff Eq Solver<select id="ODE"><option>Eulers Method</option><option>Modified Euler</option><option selected="selected">Runge-Kutta</option><option>Adaptive Step-Modified Euler</option><option>Adaptive Step-Runge-Kutta</option></select></label>-->
+
+
+
+<label style="display: block;">&emsp;&emsp;background<select id = "background"><option selected="selected">teal</option><option>none</option></select></label>
+
+
+<center>gravity</center>
+
+<center><div class="slidecontainer">
+  <input type="range" min="5" max="20" value="10" class="slider" id="kRange">
+</div></center>
+<center><b>angle</b></center>
+<center>
+<div class="slidecontainer">
+  <input type="range" min="-750" max="750" value="0" class="slider" id="stretchRange">
+</div></center>
+<center>length</center>
+<center><div class="slidecontainer">
+  <input type="range" min="50" max="250" value="175" class="slider" id="massRange">
+</div></center>
+<center>
+<p>
+instructions: </p>
+<p>
+Move the pendulum with the <b>angle</b> slider, and click play to oscilate the pendulum.
+<p>Warning: Not all browser types supported.</p>
+
+
+</p>
+</center>
+	<script>
+		const winRat = .975
+		const canvas = document.querySelector('#c');
+		var renderer = new THREE.WebGLRenderer({canvas});
+		renderer.setSize(window.innerWidth*winRat,window.innerHeight*.9);
+	
+	
+	
+
+
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(75,window.innerWidth /window.innerHeight,.1,1000);
+		
+		/*var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth,window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+		*/
+		//window resize fix
+		window.addEventListener('resize',function(){
+			var width = window.innerWidth*winRat;
+			var height = window.innerHeight*winRat;
+			renderer.setSize(width,height);
+			camera.aspect = width / height;
+			camera.updateProjectionMatrix();
+		})
+		
+		controls = new THREE.MapControls(camera,renderer.domElement);
+		controls.screenSpacePanning = false;
+		controls.maxPolarAngle = Math.PI / 2;
+		
+		
+var dog = null;
+var loader = new THREE.GLTFLoader();
+
+loader.load('scene.gltf', function(object){
+dog = object.scene;
+
+
+});
+	
+
+		var light = new THREE.PointLight( 0xff0000, 4, 100 );
+light.position.set( 50, 50, 50 );
+scene.add( light );
+		var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+scene.add( directionalLight );
+		//add elements
+		
+		camera.rotateY(Math.PI/2)
+		var box = new THREE.Mesh(new THREE.BoxGeometry(700, 700, 700, 16, 16, 16), new THREE.MeshBasicMaterial({color: 0xfffff, wireframe: true}));
+		scene.add(box);
+		const G = 2*(10**(-44));
+	const dt =  60*24*3;
+	const conFactor = 1/100;
+	const AU = 1.496 * 10**8;
+//vector math
+		function va(a,b){
+			var c = [];
+			c[0] = a[0] + b[0];
+			c[1] = a[1] + b[1];
+			c[2] = a[2] + b[2];
+			return c;
+		}
+		function va3(a,b,c){
+			var d = [];
+			d[0] = a[0] + b[0] + c[0];
+			d[1] = a[1] + b[1] + c[1];
+			d[2] = a[2] + b[2] + c[2];
+			return d;
+		}
+		function vm(a,b){
+			var c = [];
+			c[0] = a[0]*b;
+			c[1] = a[1]*b;			
+			c[2] = a[2]*b;
+			return c;
+		}
+		function mag(a,b){
+			var c = ((a[0]-b[0])**2 +(a[1]-b[1])**2 +(a[2]-b[2])**2)**(.5);
+			return c;
+		}
+		function rad(a,b){ //a is earth, b is sun
+			var c = [a[0] - b[0],a[1] - b[1],a[2] - b[2]];
+			
+			return c;
+		}
+		function f1(pos,vel,a,b){ //calculates acc using pos and vel and a and b
+			//return acc
+			//acc for a
+			return vel;
+			//acc for b
+				
+			}
+		function f2(pos,vel,a,b){
+			//return vel			
+			//acc for a
+			var vprime;
+			vprime = va(vm(rad(pos,a.pos),-1*G*a.mass/(mag(pos,a.pos))**2),vm(rad(pos,b.pos),-1*G*b.mass/(mag(pos,b.pos))**2 ));
+			
+
+			console.log(vprime);
+			return vprime;
+			//acc for b
+				
+		}
+		function f2l(pos,vel,a){
+			//return vel			
+			//acc for a
+			var vprime;
+			vprime = vm(rad(pos,a.pos),-1*G*a.mass/(mag(pos,a.pos))**2);
+			
+
+			console.log(vprime);
+			return vprime;
+			//acc for b
+				
+		}
+		class Planet{
+				constructor(pos,vel,rad,mass,col,scene){
+					this.pos = pos;
+					this.vel = vel;
+					this.rad = rad;
+					this.mass = mass;
+					this.col = col;
+					this.ticker = 0;
+					this.geometry = new THREE.SphereGeometry(rad, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2);
+					this.model = new THREE.Mesh(new THREE.SphereGeometry(rad, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2), new THREE.MeshBasicMaterial({color:this.col,wireframe:false}));
+					this.scene = scene;
+					scene.add(this.model);
+					this.model.position.x = pos[0]/conFactor;
+					this.model.position.y = pos[1]/conFactor;
+					this.model.position.z = pos[2]/conFactor;
+					
+					//path draw
+					
+					
+				}
+			render(){
+				
+				this.model.position.x = this.pos[0]/conFactor;
+				this.model.position.y = this.pos[1]/conFactor;
+				this.model.position.z = this.pos[2]/conFactor;
+
+				//this.model.position.y = this.pos[1]/conFactor;
+				//this.model.position.z = this.pos[2]/conFactor;
+				
+				//console.log(this.pos);
+					//scene.add(line);
+			}
+			euler_step(planA,planB){
+				this.vel = va(this.vel,vm(f2(this.pos,this.vel,planA,planB),dt));
+				this.pos = va(this.pos,vm(this.vel,dt));
+				//console.log(this.pos);
+				//this.render();
+			}
+			reuler_step(planA,planB){
+				this.vel = va(this.vel,vm(f2(this.pos,this.vel,planA,planB),dt));
+				this.pos = va(this.pos,vm(this.vel,dt));
+				
+			}
+			verlet_step(planA,planB){
+				var pos_new = va3(this.pos,vm(this.vel,dt),vm(f2(this.pos,this.vel,planA,planB),.5*dt*dt));
+				this.vel = va(this.vel,vm(va(f2(this.pos,this.vel,planA,planB),f2(pos_new,this.vel,planA,planB)),.5*dt));
+				this.pos = pos_new;
+				
+			}
+			verlet_stepl(planA){
+				var pos_new = va3(this.pos,vm(this.vel,dt),vm(f2l(this.pos,this.vel,planA),.5*dt*dt));
+				this.vel = va(this.vel,vm(va(f2(this.pos,this.vel,planA,planA),f2l(pos_new,this.vel,planA)),.5*dt));
+				this.pos = pos_new;
+				
+			}
+			trace(){
+			if(this.ticker % 45  == 0){
+			var t = new THREE.Mesh(new THREE.SphereGeometry(.4, 8, 8, 0, Math.PI * 2, 0, Math.PI * 2), new THREE.MeshBasicMaterial({color:0xFFFFFF,wireframe:false}));
+			t.position.x = this.pos[0]/conFactor;
+			t.position.y = this.pos[1]/conFactor;
+			t.position.z = this.pos[2]/conFactor;
+			this.ticker = 0;
+			}
+			scene.add(t);
+			this.ticker += 1;
+			}
+		}
+		
+	//
+    
+	
+	
+	
+		var sun = new Planet([0,0,0],[0,0,0],Math.sqrt(290),1.989*10**30,0xfdb813,scene);
+		var merc = new Planet([0,0,.313],[38.86/AU,0,0],Math.sqrt(1),1.989*10**4,0xd5d2d1,scene);
+		var venu = new Planet([0,0,.7160],[35.26/AU,0,0],Math.sqrt(2.5),1.989*10**4,0x8B91A1,scene);
+		var eart = new Planet([0,0,1],[30.29/AU,0,0],Math.sqrt(2.6),1.989*10**4,0x0077be,scene);
+		var mars = new Planet([0,0,1.6384],[24.1/AU,0,0],Math.sqrt(1.4),1.989*10**4,0x934838,scene);
+		var jupi = new Planet([0,0,5.3688],[13.1/AU,0,0],Math.sqrt(29.3),1.989*10**4,0xe36e4b,scene);
+		var satu = new Planet([0,0,9.9572],[9.7/AU,0,0],Math.sqrt(24.71),1.989*10**4,0xead6b8,scene);
+		//var uran = new Planet([0,0,.45],[3.2*10**-7,0,0],Math.sqrt(1),1.989*10**4,0xd5d2d1,scene);
+
+		//var test = new Planet([0,0,0],[0,.01,0],1,5.972*10**24,0x39ff14,scene);
+		//var test2 = new Planet([1,0,0],[.01,0,0],2,1.989*10**24,0xfdb813,scene);
+		//var test3 = new Planet([.5,0,0],[0,0,.01],1,5.972*10**40,0x0077be,scene);
+
+		camera.position.y = 0;
+		camera.position.z = 150;
+		//camera.position.x = 100;
+		camera.rotation.z = Math.PI/2;
+		var update = function()
+		{
+			merc.verlet_stepl(sun);
+			merc.trace();
+			merc.render();
+			venu.verlet_stepl(sun);
+			venu.trace();
+			venu.render();
+			eart.verlet_stepl(sun);
+			eart.trace();
+			eart.render();
+			mars.verlet_stepl(sun);
+			mars.trace();
+			mars.render();
+			jupi.verlet_stepl(sun);
+			jupi.trace();
+			jupi.render();
+			satu.verlet_stepl(sun);
+			satu.trace();
+			satu.render();
+				//test.verlet_step(test2,test3);
+			//test2.verlet_step(test,test3);
+			//test3.verlet_step(test2,test);
+		//test.trace();
+		//test2.trace();
+		//test3.trace();
+		//test.render();
+		//test2.render();
+		//test3.render();
+			//model.rotation.y += .05;
+		};
+		var render = function()
+		{
+			renderer.render(scene,camera);
+		};
+		var up = true;
+		var v = 0;
+		var k = .01;
+		var m = 175;
+		var a = 0;
+		var t = 1;
+		var xo = 0;
+		var start = false;
+
+	
+		var GameLoop = function()
+		{ 
+		
+		//intialize sliders
+		
+
+		//kslider
+		
+		var tt =document.getElementById("time").value;
+		if (!isNaN(tt) && tt.toString().indexOf('.') != -1)
+			t = tt;
+		var kk = document.getElementById("kRange").value;
+		k = 1*kk;
+		
+		var ss = document.getElementById("stretchRange").value;
+		
+		m = document.getElementById("massRange").value;
+		var res = document.getElementById("reset").value;
+		
+		var d = document.getElementById("damping").value;
+		//console.log(document.getElementById("energy").checked);
+		
+		
+		var ppbutton = document.getElementById("pause");
+		document.getElementById("pause").onclick = function() {
+		if(start == false){
+		ppbutton.innerHTML = "pause";
+		start = true;}
+		else{
+		ppbutton.innerHTML = "play";
+		start = false;	
+		}}
+		
+		document.getElementById("reset").onclick = function() {
+		
+		ppbutton.innerHTML = "play";
+		start = false;	
+		v = 0;
+		document.getElementById("kRange").value = 10
+		document.getElementById("massRange").value = 175; 
+		document.getElementById("stretchRange").value = 0;
+		}
+		
+
+		if((dog && ((ss != xo) && (ss != 0)))&&!start){
+			xo = ss;
+			
+			//dog.scale.z = 1 + .001*xo;
+			//cube.position.z = 150 + .001*150*xo;
+			v = 0;
+			dog.rotation.z = (-Math.PI/2 + xo/750*Math.PI);
+				//dog.rotateY(Math.PI/16)
+				//dog.rotateZ(Math.PI/16)
+			dog.scale.x = m/175;
+
+		
+		}
+		
+		var e = document.getElementById("background");
+
+		
+		if(document.getElementById("background").value == "none"){
+			box.visible = false;
+		}else{
+			box.visible = true;
+
+		}
+		//var ode = document.getElementById("ODE").value;
+		var ode = "Eulers Method";
+		if((dog && !up)&&start){
+		
+		if(ode == "Eulers Method"){
+		a = -(1)*(k/m)*Math.sin(dog.rotation.z + Math.PI/2) - d*.01*v;
+		v += a*t;
+		//cube.position.z += v*t;
+		dog.rotation.z += v*t;
+		//dog.scale.z += v*t/150;
+					dog.scale.x = m/175;
+
+		}
+		
+		}
+				requestAnimationFrame(GameLoop);
+				update();
+				render();
+				
+				
+		}
+		GameLoop();
+	</script>
+
+	</body>
+</html>
