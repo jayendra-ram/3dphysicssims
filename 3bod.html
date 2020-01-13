@@ -1,0 +1,297 @@
+<html>
+	<head>
+		<title> da zone </title>
+
+		
+	</head>
+	
+	<style>
+	.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 75%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 10px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  cursor: pointer; /* Cursor on hover */
+  background: #000000;
+}
+.slider::-moz-range-thumb {
+  width:10px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  cursor: pointer; /* Cursor on hover */
+}
+	
+	
+	
+	
+	
+	</style>
+	
+	<center>
+	<div style="width: 1000px;">
+	
+ <div style="float: left; width: 300px;"><input type="range" min="-10" max="10" value="0" class="slider" id="green" readonly style="border:0; background:#39ff14;"></div>
+ <div style="float: left; width: 300px;"><input type="range" min="-10" max="10" value="0" class="slider" id="orange" readonly style="border:0; background:#f6931f;"></div>
+ <div style="float: left; width: 300px;"><input type="range" min="-10" max="10" value="0" class="slider" id="blue" readonly style="border:0; background:#0077be;"></div>
+ <br style="clear: left;" />
+</div>
+	</center>
+	
+	
+	<body>
+	<script src = "js/three.js"></script>
+<script src = "js/OrbitControls.js"></script>
+	<script src = "js/GLTFLoader.js"></script>
+
+
+	<script>
+//30 units = 1 AU
+	/*
+	TODO:
+	Put functions in seperate js
+	add paths
+	add buttons and sliders (logarithmic) and reset
+	menus
+	host
+
+	
+	N body using array of planets
+	do math in real vals and then convert to render
+	
+	
+	*/
+	//const canvas = document.querySelector('#c');
+		//var renderer = new THREE.WebGLRenderer({canvas});
+	
+	const G = 2*(10**(-44));
+	const dt =  .1;
+	const conFactor = 1/100;
+//vector math
+		function va(a,b){
+			var c = [];
+			c[0] = a[0] + b[0];
+			c[1] = a[1] + b[1];
+			c[2] = a[2] + b[2];
+			return c;
+		}
+		function va3(a,b,c){
+			var d = [];
+			d[0] = a[0] + b[0] + c[0];
+			d[1] = a[1] + b[1] + c[1];
+			d[2] = a[2] + b[2] + c[2];
+			return d;
+		}
+		function vm(a,b){
+			var c = [];
+			c[0] = a[0]*b;
+			c[1] = a[1]*b;			
+			c[2] = a[2]*b;
+			return c;
+		}
+		function mag(a,b){
+			var c = ((a[0]-b[0])**2 +(a[1]-b[1])**2 +(a[2]-b[2])**2)**(.5);
+			return c;
+		}
+		function rad(a,b){ //a is earth, b is sun
+			var c = [a[0] - b[0],a[1] - b[1],a[2] - b[2]];
+			
+			return c;
+		}
+		function f1(pos,vel,a,b){ //calculates acc using pos and vel and a and b
+			//return acc
+			//acc for a
+			return vel;
+			//acc for b
+				
+			}
+		function f2(pos,vel,a,b){
+			//return vel			
+			//acc for a
+			var vprime;
+			vprime = va(vm(rad(pos,a.pos),-1*G*a.mass/(mag(pos,a.pos))**2),vm(rad(pos,b.pos),-1*G*b.mass/(mag(pos,b.pos))**2 ));
+			
+
+			//console.log(vprime);
+			return vprime;
+			//acc for b
+				
+		}
+		class Planet{
+				constructor(pos,vel,rad,mass,col,scene){
+					this.pos = pos;
+					this.vel = vel;
+					this.rad = rad;
+					this.mass = mass;
+					this.col = col;
+					this.ticker = 0;
+					this.geometry = new THREE.SphereGeometry(rad, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2);
+					this.model = new THREE.Mesh(this.geometry, new THREE.MeshBasicMaterial({color:this.col,wireframe:false}));
+					this.scene = scene;
+					scene.add(this.model);
+					this.model.position.x = pos[0]/conFactor;
+					this.model.position.y = pos[1]/conFactor;
+					this.model.position.z = pos[2]/conFactor;
+					//path draw
+					
+					
+				}
+			render(){
+				
+				this.model.position.x = this.pos[0]/conFactor;
+				this.model.position.y = this.pos[1]/conFactor;
+				this.model.position.z = this.pos[2]/conFactor;
+
+				//this.model.position.y = this.pos[1]/conFactor;
+				//this.model.position.z = this.pos[2]/conFactor;
+				
+				//console.log(this.pos);
+					//scene.add(line);
+			}
+			expand(r){
+			this.model.scale.x = Math.pow(1.15,r);
+			this.model.scale.y = Math.pow(1.15,r);
+			this.model.scale.z = Math.pow(1.15,r);
+			scene.add(this.model);
+
+			}
+			euler_step(planA,planB){
+				this.vel = va(this.vel,vm(f2(this.pos,this.vel,planA,planB),dt));
+				this.pos = va(this.pos,vm(this.vel,dt));
+				//console.log(this.pos);
+				//this.render();
+			}
+			reuler_step(planA,planB){
+				this.vel = va(this.vel,vm(f2(this.pos,this.vel,planA,planB),dt));
+				this.pos = va(this.pos,vm(this.vel,dt));
+				
+			}
+			verlet_step(planA,planB){
+				var pos_new = va3(this.pos,vm(this.vel,dt),vm(f2(this.pos,this.vel,planA,planB),.5*dt*dt));
+				this.vel = va(this.vel,vm(va(f2(this.pos,this.vel,planA,planB),f2(pos_new,this.vel,planA,planB)),.5*dt));
+				this.pos = pos_new;
+				
+			}
+			trace(){
+			if(this.ticker % 15  == 0){
+			var t = new THREE.Mesh(new THREE.SphereGeometry(.5, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2), new THREE.MeshBasicMaterial({color:this.col,wireframe:false}));
+			t.position.x = this.pos[0]/conFactor;
+			t.position.y = this.pos[1]/conFactor;
+			t.position.z = this.pos[2]/conFactor;}
+			scene.add(t);
+			this.ticker += 1;
+			}
+		}
+		
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(75,window.innerWidth /window.innerHeight,.1,1000);
+		
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth,window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+		
+		
+		
+		
+		//window resize fix
+		window.addEventListener('resize',function(){
+			var width = window.innerWidth;
+			var height = window.innerHeight;
+			renderer.setSize(width,height);
+			camera.aspect = width / height;
+			camera.updateProjectionMatrix();
+		})
+		
+		
+		//controls
+		controls = new THREE.MapControls(camera,renderer.domElement);
+		controls.screenSpacePanning = false;
+		controls.maxPolarAngle = Math.PI / 2;
+		var m1 = document.getElementById("green").value;
+		var m2 = document.getElementById("orange").value;
+		var m3 = document.getElementById("blue").value;
+
+		var test = new Planet([0,0,0],[0,.01,0],3,6*10**(40),0x39ff14,scene);
+		var test2 = new Planet([1,0,0],[.01,0,.03],5,2*10**(40),0xfdb813,scene);
+		var test3 = new Planet([.5,0,0],[-.01/3,-.01,.01],3,6*10**(40),0x0077be,scene);
+		//scene.add(test.model);
+
+		var box = new THREE.Mesh(new THREE.BoxGeometry(700, 700, 700, 16, 16, 16), new THREE.MeshBasicMaterial({color: 0xfffff, wireframe: true}));
+		//scene.add(box);
+		
+		camera.position.x = 159;
+		camera.position.y = 1.12;
+		camera.position.z = 91.8;
+		//sphere.position.x = 1;
+		//document.addEventListener('keydown', function(event) {
+    /*if(event.keyCode == 65) {
+        camera.position.x += -.1;
+    }
+    if(event.keyCode == 68) {
+        camera.position.x += .1;
+    }
+	 if(event.keyCode == 87) {
+        camera.position.z += -.1;
+    }
+	 if(event.keyCode == 83) {
+        camera.position.z += .1;
+    }*/
+		controls.update();
+		var update = function()
+		{
+		console.log(camera.position);
+							test.expand(document.getElementById("green").value);
+							test2.expand(document.getElementById("orange").value);
+							test3.expand(document.getElementById("blue").value);
+
+		//	cube.rotation.x += .1;
+			//cube.rotation.z += .05;
+			//consoloe.log(m1);
+					test.mass = 2*Math.pow(10,40)*Math.pow(1.5,document.getElementById("green").value);
+					test2.mass = 6*10**(40)*Math.pow(1.5,document.getElementById("orange").value);
+					test3.mass = 2*10**(40)*Math.pow(1.5,document.getElementById("blue").value);
+			//test.expand(10);
+			test.verlet_step(test2,test3);
+			test2.verlet_step(test,test3);
+			test3.verlet_step(test2,test);
+		test.trace();
+		test2.trace();
+		test3.trace();
+		test.render();
+		test2.render();
+		test3.render();
+		};
+		var render = function()
+		{
+			renderer.render(scene,camera);
+		};
+		
+		
+		var GameLoop = function()
+		{
+				requestAnimationFrame(GameLoop);
+				update();
+				//controls.update();
+				render();
+		};
+		GameLoop();
+	</script>
+	
+	</body>
+</html>
