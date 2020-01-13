@@ -132,7 +132,17 @@
 	<script src = "js/OrbitControls.js"></script>
 	<script src = "js/GLTFLoader.js"></script>
 
+<center>
+<p>
+instructions: </p>
+<p>
+Stretch the spring using the <b>stretch</b> slider, and click play to oscilate the spring.
+<p>Warning: Not all browser types supported.</p>
 
+
+</p>
+</center>
+	
 <center>
 <a href="#" class="myButton" id = "pause">play</a>
 <a href="#" class="myButton" id = "reset">reset</a></center>
@@ -165,22 +175,13 @@
 <center><b>stretch</b></center>
 <center>
 <div class="slidecontainer">
-  <input type="range" min="-750" max="750" value="0" class="slider" id="stretchRange">
+  <input type="range" min="-750" max="750" value="250" class="slider" id="stretchRange">
 </div></center>
 <center>mass</center>
 <center><div class="slidecontainer">
   <input type="range" min="1" max="20" value="10" class="slider" id="massRange">
 </div></center>
-<center>
-<p>
-instructions: </p>
-<p>
-Stretch the spring using the <b>stretch</b> slider, and click play to oscilate the spring.
-<p>Warning: Not all browser types supported.</p>
 
-
-</p>
-</center>
 	<script>
 		const winRat = .7
 		const canvas = document.querySelector('#c');
