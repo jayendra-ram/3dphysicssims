@@ -1,0 +1,523 @@
+<html>
+	<head>
+		<title> Gas Particle Simulator </title>
+		<canvas id="c" ></canvas>
+
+		<style>
+			body{margin 12;}
+			#c {
+				float: left;
+				 border: 4px solid #ff6600;
+			}
+			#button {
+				float: right;
+			}
+			//canvas {width:2%; height:75%;};
+			line-height: 90px;
+			font-family: Georgia, serif;
+			.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 25%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 10px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  cursor: pointer; /* Cursor on hover */
+  background: #00FFFF;
+}
+.slider::-moz-range-thumb {
+  width:10px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  cursor: pointer; /* Cursor on hover */
+}
+
+
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.myButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf));
+	background:-moz-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-webkit-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-o-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-ms-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf',GradientType=0);
+	background-color:#ededed;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#777777;
+	font-family:Futura;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+.myButton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed));
+	background:-moz-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-webkit-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-o-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-ms-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed',GradientType=0);
+	background-color:#dfdfdf;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+.tab { margin-left: 40px; }
+#info {
+				text-align: left;
+				padding: 10px;
+				z-index: 10;
+				width: 60%;
+				font-size:25px;
+				position: absolute;
+				color: white;
+				text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+			}
+
+
+		</style>
+		
+	</head>
+	
+
+	<body>
+	
+	
+	<div id="info"></div>
+	
+	
+	<script src = "js/three.js"></script>
+	<script src = "js/OrbitControls.js"></script>
+	<script src = "js/GLTFLoader.js"></script>
+
+<center><p>
+<i> use mouse/trackpad/touchscreen to interact with the 3D view</i>
+</p></center>
+<center>
+<a href="#" class="myButton" id = "pause">play</a>
+<a href="#" class="myButton" id = "reset">reset</a></center>
+
+
+<!--<label style="display: block;">&emsp;&emsp; spring stiffness<input type="text" id="yeet" size="4" value=".01">
+</label><label style="display: block;">&emsp;&emsp; spring length<input type="text" size="4" value="2.50"></label>
+<label style="display: block;">&emsp;&emsp;initial stretch<input type="text" id = "xo" size="4" value="500"></label>-->
+
+<!--<label style="display: block;">&emsp;&emsp;<input type="checkbox">show clock</label>
+<label style="display: block;">&emsp;&emsp;<input type="checkbox">pan-zoom</label>-->
+<!--<label style="display: block;">&emsp;&emsp;time step<input type="text" size="6" value="0.0250"></label>-->
+<label style="display: block;">&emsp;&emsp;time rate<input type="text" size="4" value="1.00" id ="time"></label>
+<!--<label style="display: block;" >&emsp;&emsp;Diff Eq Solver<select id="ODE"><option>Eulers Method</option><option>Modified Euler</option><option selected="selected">Runge-Kutta</option><option>Adaptive Step-Modified Euler</option><option>Adaptive Step-Runge-Kutta</option></select></label>-->
+
+
+
+<label style="display: block;">&emsp;&emsp;box<select id = "background"><option selected="selected">clear</option><option>none</option></select></label>
+
+
+<center>volume</center>
+
+<center><div class="slidecontainer">
+  <input type="range" min="30" max="200" value="50" class="slider" id="kRange">
+</div></center>
+<center>temperature</center>
+<center>
+<div class="slidecontainer">
+  <input type="range" min="50" max="400" value="100" class="slider" id="tempRange">
+</div></center>
+
+
+<center>
+<p>
+instructions: </p>
+<p>
+Adjust the volume and temperature sliders to vary the states of the gas.</p>
+<p>Warning: Not all browser types supported.</p>
+
+
+</p>
+</center>
+	<script>
+		const winRat = .7
+		const canvas = document.querySelector('#c');
+		var renderer = new THREE.WebGLRenderer({canvas});
+		renderer.setSize(window.innerWidth*winRat,window.innerHeight*.9);
+	
+	var dt = 1*Math.sqrt( document.getElementById("tempRange").value/100);
+	
+	function va(a,b){
+			var c = [];
+			c[0] = a[0] + b[0];
+			c[1] = a[1] + b[1];
+			c[2] = a[2] + b[2];
+			return c;
+		}
+		function va3(a,b,c){
+			var d = [];
+			d[0] = a[0] + b[0] + c[0];
+			d[1] = a[1] + b[1] + c[1];
+			d[2] = a[2] + b[2] + c[2];
+			return d;
+		}
+		function vm(a,b){
+			var c = [];
+			c[0] = a[0]*b;
+			c[1] = a[1]*b;			
+			c[2] = a[2]*b;
+			return c;
+		}
+		
+		function f1(pos,vel,a,b){ //calculates acc using pos and vel and a and b
+			//return acc
+			//acc for a
+			return vel;
+			//acc for b
+				
+			}
+		
+	var boxl = document.getElementById("kRange").value;
+	var boxw = 50;
+	var boxh = 37.5;
+	
+	
+	
+	
+	class Particle{
+				constructor(pos,vel,rad,mass,col,scene){
+					this.pos = pos;
+					this.vel = vel;
+					this.rad = rad;
+					this.mass = mass;
+					this.col = col;
+					this.ticker = 0;
+					this.geometry = new THREE.SphereGeometry(rad, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2);
+					this.model = new THREE.Mesh(this.geometry, new THREE.MeshPhongMaterial({color:this.col,wireframe:false}));
+					this.scene = scene;
+					scene.add(this.model);
+					this.model.position.x = pos[0];
+					this.model.position.y = pos[1];
+					this.model.position.z = pos[2];
+					//path draw
+					
+					
+				}
+			render(){
+				
+				this.model.position.x = this.pos[0];
+				this.model.position.y = this.pos[1];
+				this.model.position.z = this.pos[2];
+
+				//this.model.position.y = this.pos[1]/conFactor;
+				//this.model.position.z = this.pos[2]/conFactor;
+				
+				//console.log(this.pos);
+					//scene.add(line);
+			}
+			expand(r){
+			this.model.scale.x = Math.pow(1.15,r);
+			this.model.scale.y = Math.pow(1.15,r);
+			this.model.scale.z = Math.pow(1.15,r);
+			scene.add(this.model);
+
+			}
+			euler_step(){
+				this.pos = va(this.pos,vm(this.vel,dt));
+				//console.log(this.pos);
+				//this.render();
+				if(this.pos[0] >= (boxl-5) && this.vel[0] > 0){
+					this.vel[0] = -this.vel[0];
+					this.pos[0] = boxl-5;
+				}				
+				if(this.pos[0] <= (-boxl+5) && this.vel[0] < 0){
+					this.vel[0] = -this.vel[0];
+					this.pos[0] = -boxl+5;
+
+				}	
+				
+				if(this.pos[1] >= (boxh-5) && this.vel[1] > 0){
+					this.vel[1] = -this.vel[1];
+				}				
+				if(this.pos[1] <= (-boxh+5) && this.vel[1] < 0){
+					this.vel[1] = -this.vel[1];
+				}	
+				
+				if(this.pos[2] >= (boxw-5) && this.vel[2] > 0){
+					this.vel[2] = -this.vel[2];
+				}				
+				if(this.pos[2] <= (-boxw+5) && this.vel[2] < 0){
+					this.vel[2] = -this.vel[2];
+				}	
+				if(this.pos[0] >= (boxl-5)){
+					this.pos[0] = boxl-5;
+				}				
+				if(this.pos[0] <= (-boxl+5)){
+					this.pos[0] = -boxl+5;
+
+				}	
+				
+			}
+			
+			trace(){
+			if(this.ticker % 15  == 0){
+			var t = new THREE.Mesh(new THREE.SphereGeometry(.5, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2), new THREE.MeshBasicMaterial({color:this.col,wireframe:false}));
+			t.position.x = this.pos[0];
+			t.position.y = this.pos[1];
+			t.position.z = this.pos[2];
+			scene.add(t);
+			}
+			
+			this.ticker += 1;
+			}
+		}
+
+	class Gas{
+	constructor(){
+	this.gas = [];
+	}
+	add(){
+		var t = Math.floor(Math.random() * 2001);
+		var p = Math.floor(Math.random() * 1001);
+		var theta = Math.PI/1000 * t;
+		var phi = Math.PI/1000 * p;
+		this.gas.push(new Particle([0,0,0],[Math.sin(phi)*Math.cos(theta),Math.sin(phi)*Math.sin(theta),Math.cos(phi)],2,1,0xff0000,scene))
+	}
+	render(){
+		for (var i = 0; i < this.gas.length; i++) {
+			this.gas[i].euler_step();
+			this.gas[i].render();
+
+		}
+	}
+
+}
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(75,window.innerWidth /window.innerHeight,.1,1000);
+		
+		/*var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth,window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+		*/
+		//window resize fix
+		window.addEventListener('resize',function(){
+			var width = window.innerWidth*winRat;
+			var height = window.innerHeight*winRat;
+			renderer.setSize(width,height);
+			camera.aspect = width / height;
+			camera.updateProjectionMatrix();
+		})
+		
+		controls = new THREE.MapControls(camera,renderer.domElement);
+		controls.screenSpacePanning = false;
+		controls.maxPolarAngle = Math.PI / 2;
+		
+		
+var dog = null;
+var loader = new THREE.GLTFLoader();
+
+loader.load('scene.gltf', function(object){
+dog = object.scene;
+
+//scene.add(dog);
+			dog.rotation.z = (-Math.PI/2);
+
+});
+	
+function addLight(...pos) {
+  const color = 0xFFFFFF;
+  const intensity = 1;
+  const light = new THREE.DirectionalLight(color, intensity);
+  light.position.set(-1, 2, 4);
+  light.position.set(...pos);
+  scene.add(light);
+}
+addLight(-1, 2, 4);
+addLight( 1, -1, -2);
+
+
+		
+		var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+scene.add( directionalLight );
+		//add elements
+		
+		camera.rotateY(Math.PI/2)
+		var box = new THREE.Mesh(new THREE.BoxGeometry(2*boxl, 2*boxh, 2*boxw, 16, 16, 16), new THREE.MeshPhongMaterial({color: 0x367588, wireframe: false, transparent: true, opacity: .5}));
+		scene.add(box);
+		
+		var geometry = new THREE.SphereGeometry(3, 16, 16, 0, Math.PI * 2, 0, Math.PI * 2);
+		var model = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:0xff0000,wireframe:false}));
+		
+		document.getElementById("pause").innerHTML = "pause";
+		camera.position.y = 0;
+		camera.position.z = 150;
+		//camera.position.x = 100;
+		camera.rotation.z = Math.PI/2;
+		
+		controls.update();
+		var af = new Particle([0,0,0],[.1,.2,0],2,1,0xff0000,scene);
+		var gg = new Gas();
+		for(var i = 0;i < 100;i++){
+				gg.add();}
+
+		var qq = .1;
+		var update = function()
+		{
+		if(start){
+		dt = 2*Math.sqrt( document.getElementById("tempRange").value/100);
+		box.scale.x = document.getElementById("kRange").value/50;
+				controls.update();
+		boxl = document.getElementById("kRange").value;
+		af.euler_step();
+		af.render();
+		gg.render();
+			model.position.x += qq;
+			if(model.position.x >= 47.3){
+			qq = -.2;
+			}
+			//model.rotation.y += .05;
+		}};
+		var render = function()
+		{
+			renderer.render(scene,camera);
+		};
+		var up = true;
+		var v = 0;
+		var k = .01;
+		var m = 175;
+		var a = 0;
+		var t = 1;
+		var xo = 0;
+		var start = true;
+
+		var f2 = function(x,v,k,d,m){
+			return v;
+		}
+		var f1 = function(x,v,k,d,m){
+			return (-1*k*(x - 150))/m 
+			//- document.getElementById("damping").value*v*.01;
+		}
+		
+		var GameLoop = function()
+		{ 
+		
+		//intialize sliders
+		
+
+		//kslider
+		
+		var tt =document.getElementById("time").value;
+		if (!isNaN(tt) && tt.toString().indexOf('.') != -1)
+			t = tt;
+		var kk = document.getElementById("kRange").value;
+		k = 1*kk;
+		
+		//var ss = document.getElementById("stretchRange").value;
+		
+		m = null;
+		var res = document.getElementById("reset").value;
+		
+		var d = null;
+		
+		var info = document.getElementById("info");
+		info.innerHTML = "Volume= "  +  document.getElementById("kRange").value + " L " + '|\n' + "Pressure= " + ((10000 * document.getElementById("tempRange").value * 8.314 /document.getElementById("kRange").value)).toFixed(2) + " Pa " + '|\n' + "Temperature " + document.getElementById("tempRange").value + " K";
+			//console.log(document.getElementById("energy").checked);
+		
+		
+		var ppbutton = document.getElementById("pause");
+		document.getElementById("pause").onclick = function() {
+		if(start == false){
+		ppbutton.innerHTML = "pause";
+		start = true;}
+		else{
+		ppbutton.innerHTML = "play";
+		start = false;	
+		}}
+		
+		document.getElementById("reset").onclick = function() {
+		
+		ppbutton.innerHTML = "pause";
+		start = false;	
+		v = 0;
+		document.getElementById("kRange").value = 50;
+		document.getElementById("tempRange").value = 100;
+		dog.rotation.z = (-Math.PI/2);
+		}
+		
+		var e = document.getElementById("background");
+
+		
+		if(document.getElementById("background").value == "none"){
+			box.visible = false;
+		}else{
+			box.visible = true;
+
+		}
+		//var ode = document.getElementById("ODE").value;
+		var ode = "Eulers Method";
+		if((dog && !up)&&start){
+		
+		if(ode == "Eulers Method"){
+		a = -(1)*(k/m)*Math.sin(dog.rotation.z + Math.PI/2) - d*.01*v;
+		v += a*t;
+		//cube.position.z += v*t;
+		dog.rotation.z += v*t;
+		//dog.scale.z += v*t/150;
+					dog.scale.x = m/175;
+
+		}
+		
+		
+		
+		
+		}
+		
+		
+				requestAnimationFrame(GameLoop);
+				update();
+				render();
+				
+				
+		}
+		GameLoop();
+	</script>
+
+	</body>
+</html>
