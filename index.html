@@ -77,7 +77,9 @@ Hello there! This website hosts a few 3D concept projects. They were all origina
 <i> IMPORTANT: To view the simulations, you need to use either a trackpad, a mouse or a touch screen. Using gestures on a trackpad, a mouse wheel + right-click or a touch screen you can move around the 3D view. Use the sliders to alter parameters.</i>
 	</p>
 <div id="simlist">
-
+<a href="https://3dphysicssims.com/gas.html">
+  <img src="gas_thumb.PNG" alt="" width="250" height="200"><br>Ideal Gas</a>
+	
 <a href="https://3dphysicssims.com/3bod.html">
   <img src="3bod.PNG" alt="" width="250" height="200"><br>3-Body Problem</a>
 	
@@ -96,10 +98,12 @@ Hello there! This website hosts a few 3D concept projects. They were all origina
 	<p> Source code for the Numerical methods can be found <a href="https://github.com/Soycid/soycid.github.io"> here</a>, however I got most of my ideas for ODE simulation from  <i> Elementary Differential Equations And Boundary Value Problems </i>. The computations done by the numerical methods are all done client-side through JavaScript and graphically represented using the WebGL-based ThreeJs graphics library. </p>
 
 <h2 lang="en">Descriptions</h2>
+	
 <h1 lang="en">Ideal Gas</h1>
-	<p> An ideal gas is... </p>
-	
-	
+	<p> An ideal gas is a model of a theoretical gas composed of many randomly moving point particles whose only interactions are perfectly elastic collisions.</p>
+	<p> The model allows a very simple relation between pressure (<b>P</b>), volume (<b>V</b>), and temperature (<b>T</b>) as follows:
+	&emsp; <b> PV = nRT </b>	
+	<p> Of course, this model is <i>ideal</i>, so it doesn't take into account inter-molecular forces, collisions between molecules, etc. </p>
 <h1 lang="en">Three Body Problem</h1>
 	<p> The three body problem is quite famous in celestial mechanics, as it is impossible to solve without relying on numerical methods. This problem as come up particularly when trying to model the system of the Earth, Sun and Moon. </p>
 	<p> Modeling the orbit of three celestial bodies requires one to use a numerical method to model the equations of motion. In this case, <i> symplectic euler </i> was used to solve the following equations: </p>
