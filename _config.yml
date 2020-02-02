@@ -16,8 +16,8 @@ minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt"
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Site Title"
-title_separator          : "3D Physics Simulators"
+title                    : "3D Physics Simulators"
+title_separator          : "-"
 subtitle                 : # site tagline that appears below site title in masthead
 name                     : "Jay Ram"
 description              : "Various 3D projects"
