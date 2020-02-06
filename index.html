@@ -94,6 +94,8 @@ Hello there! This website hosts a few 3D concept projects. They were all origina
 
 	
 </div>
+<h2 lang="en">Introduction</h2>
+	<p>Most of the simulations available on the internet are two-dimensional – this makes it very hard to imagine these phenomena happening in our world. Simulations allow us to illustrate dynamic processes, giving insight to the nature of certain physical laws. I therefore wanted to create ones that are usable and intuitive. I took inspiration from museum exhibits and video games when creating a minimalist aesthetic, utilizing touch controls and intuitive menus to display accurate, readable data.</p>
 
 <h2 lang="en">Theory of Simulations</h2>
 	<p>Almost all the simulations utilize <i>Numerical Methods</i>, which are algorithms that are able to generate motion from physical equations and initial conditions. The specific ones used in these simulations are the Runge-Kutta Method and the Verlet Velocity method.  </p>
@@ -102,10 +104,11 @@ Hello there! This website hosts a few 3D concept projects. They were all origina
 <h2 lang="en">Descriptions</h2>
 	
 <h1 lang="en">Ideal Gas</h1>
+	<p>As a kid I loved inflating balloons and compressing them at parties (this habit continued to modern day). However, as a student of physics it is quite unintuitive to how the gas molecules change in behavior due to the external changes. This simulation aims to visualize gas interactions at a comprehendible scale.</p>
 	<p> An ideal gas is a model of a theoretical gas composed of many randomly moving point particles whose only interactions are perfectly elastic collisions.</p>
 	<p> The model allows a very simple relation between pressure (<b>P</b>), volume (<b>V</b>), and temperature (<b>T</b>) as follows:
 	&emsp; <b> PV = nRT </b>	
-	<p> Of course, this model is <i>ideal</i>, so it doesn't take into account inter-molecular forces, collisions between molecules, etc. </p>
+	<p> Of course, this model is <i>ideal</i>, so it doesn't take into account inter-molecular forces, collisions between molecules, density etc. </p>
 <h1 lang="en">Three Body Problem</h1>
 	<p> The three body problem is quite famous in celestial mechanics, as it is impossible to solve without relying on numerical methods. This problem as come up particularly when trying to model the system of the Earth, Sun and Moon. </p>
 	<p> Modeling the orbit of three celestial bodies requires one to use a numerical method to model the equations of motion. In this case, <i> symplectic euler </i> was used to solve the following equations: </p>
@@ -117,7 +120,6 @@ Hello there! This website hosts a few 3D concept projects. They were all origina
 	<p> Using Newton's second law, we can re-write this expression as a second order ODE</p>
 	&emsp; <b> x'' = -k/m x </b>
 	<p> The simulation is a visualization of this equation. I also added the ability to dampen, making it more akin to a real spring</p>
-
 <h1 lang="en">Single Pendulum</h1>
 	<p> Like the Hookean spring, the simple pendulum can be described as a <i> simple harmonic oscillator </i>, however this is only true for small angles. The equation for the motion of a pendulum is as follows: </p>
 	&emsp; <b> θ'' = − g⁄R sin θ </b>
