@@ -107,20 +107,24 @@ Hello there! This website hosts a few 3D concept projects. They were all origina
 	<p>As a kid I loved inflating balloons and compressing them at parties (this habit continued to modern day). However, as a student of physics it is quite unintuitive to how the gas molecules change in behavior due to the external changes. This simulation aims to visualize gas interactions at a comprehendible scale.</p>
 	<p> An ideal gas is a model of a theoretical gas composed of many randomly moving point particles whose only interactions are perfectly elastic collisions.</p>
 	<p> The model allows a very simple relation between pressure (<b>P</b>), volume (<b>V</b>), and temperature (<b>T</b>) as follows:
-	&emsp; <b> PV = nRT </b>	
+	<p>&emsp; <b> PV = nRT </b></p>	
 	<p> Of course, this model is <i>ideal</i>, so it doesn't take into account inter-molecular forces, collisions between molecules, density etc. </p>
 <h1 lang="en">Three Body Problem</h1>
 	<p> The three body problem is quite famous in celestial mechanics, as it is impossible to solve without relying on numerical methods. This problem as come up particularly when trying to model the system of the Earth, Sun and Moon. </p>
+	<p> A practical application for this simulation would be prediction eclipses, using intial conditions of the Earth-Sun-Moon system to determine when an eclipse will occur</p>
 	<p> Modeling the orbit of three celestial bodies requires one to use a numerical method to model the equations of motion. In this case, <i> symplectic euler </i> was used to solve the following equations: </p>
 	<img src="3bodEQ.png" alt="" width="285" height="195">
 	<p>The simulation also traces the path of the planets. In my opinion, the shapes are quite aesthetic, so have fun playing with the sliders! </p>
 <h1 lang="en">Single Oscillating Spring</h1>
+	<p> One of the first toys I had as a child was a Slinky plastic coiled spring. I had a fixation with bouncing it from the top of the stairs all the way to the bottom.  Springs have been an important technology in the industrial revolution; the coiled spring emerged in the 15th century and can since be found pretty much everywhere from cars to beds to pens. Non-coiled springs have existed since ancient times, and using the broad definition as a device that stores mechanical energy and can use elastic properties to convert it to kinetic energy, one could consider the first spring to be a bow.</p>
+	<p>The first mathematical model of a spring was devised by Robert Hooke in 1678. He proposed that the force of the spring was proportional to its displacement.</p>
 	<p>The equation for a Hookean spring is:</p>
 	&emsp; <b> F = - kx </b>
 	<p> Using Newton's second law, we can re-write this expression as a second order ODE</p>
 	&emsp; <b> x'' = -k/m x </b>
 	<p> The simulation is a visualization of this equation. I also added the ability to dampen, making it more akin to a real spring</p>
 <h1 lang="en">Single Pendulum</h1>
+	<p> Like the spring, the pendulum has a fascinating history.  By definition, a pendulum is a weight suspended from a pivot in a manner that it can swing freely.  In history the pendulum has been used in a seismometer to locate earthquakes in China. Later it was used to keep time in a clock and measure the gravitational acceleration of the Earth. The simplicity of a pendulum allowed to be utilized by multiple ancient civilizations in order to create time-keeping devices.</p>
 	<p> Like the Hookean spring, the simple pendulum can be described as a <i> simple harmonic oscillator </i>, however this is only true for small angles. The equation for the motion of a pendulum is as follows: </p>
 	&emsp; <b> θ'' = − g⁄R sin θ </b>
 	<p> This can be solved iteratively using the same methods as the oscillating spring. </p>
